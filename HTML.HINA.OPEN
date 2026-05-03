@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HINA IA - CORE V5.5</title>
+    <style>
+        /* --- ESTILIZAÇÃO E HUD --- */
+        :root { --hina-main: #ff007f; --hina-sec: #00f2ff; --glow: 0 0 20px var(--hina-main); }
+        
+        body { 
+            background: #000; color: #fff; font-family: 'Orbitron', sans-serif; 
+            margin: 0; height: 100vh; overflow: hidden; 
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.15; z-index: 0; }
+        
+        .hina-img { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: url('hina.jpg') center/cover no-repeat;
+            filter: brightness(0.3) contrast(1.2); z-index: -1;
+            transition: 2s;
+        }
+
+        /* --- SISTEMA DE SEGURANÇA GHOST SHIELD --- */
+        #boot-loader { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 1.5s;
+        }
+        .access-panel { 
+            border: 2px solid var(--hina-main); padding: 40px; border-radius: 10px; 
+            box-shadow: var(--glow); background: rgba(0,0,0,0.95); text-align: center;
+        }
+        input[type="password"] {
+            background: none; border: 1px solid var(--hina-main); color: #fff; 
+            padding: 15px; text-align: center; width: 200px; outline: none; 
+            font-family: Orbitron; font-size: 1.2em; margin-bottom: 20px;
+        }
+
+        /* --- NÚCLEO HOLOGRÁFICO --- */
+        #main-ui { display: none; flex-direction: column; align-items: center; z-index: 10; width: 100%; opacity: 0; transition: 2s; }
+        
+        #core-wrap { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
+        .ring { 
+            position: absolute; border: 2px solid transparent; border-radius: 50%; 
+            animation: rotate var(--d) linear infinite; opacity: 0.5;
+        }
+        .r1 { width: 200px; height: 200px; border-top-color: var(--hina-main); --d: 3s; }
+        .r2 { width: 240px; height: 240px; border-left-color: var(--hina-sec); --d: 6s; }
+        .r3 { width: 280px; height: 280px; border-bottom-color: var(--hina-main); --d: 9s; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        #hina-heart { 
+            width: 100px; height: 100px; cursor: pointer; 
+            filter: drop-shadow(0 0 30px var(--hina-main)); transition: 0.3s;
+        }
+        svg { fill: var(--hina-main); }
+
+        /* --- CAIXA DE DIÁLOGO --- */
+        #dialog-box {
+            position: absolute; bottom: 40px; width: 85%; max-width: 500px;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15); padding: 25px;
+            border-radius: 12px; box-shadow: 0 15px 60px rgba(0,0,0,0.9);
+            font-family: 'Segoe UI', sans-serif; font-size: 1em; line-height: 1.6;
+            border-left: 6px solid var(--hina-main); color: #fff;
+        }
+
+        .hud-status { position: absolute; top: 20px; width: 92%; display: flex; justify-content: space-between; font-size: 0.6em; letter-spacing: 3px; color: var(--hina-sec); }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <canvas id="matrix-canvas"></canvas>
+    <div class="hina-img"></div>
+
+    <!-- Tela de Desbloqueio -->
+    <div id="boot-loader">
+        <div class="access-panel">
+            <p id="boot-text" style="font-size: 0.6em; letter-spacing: 5px; color: var(--hina-sec); margin-bottom: 20px;">SECURITY_LEVEL_05_ACTIVE</p>
+            <input type="password" id="key-input" placeholder="PASSKEY">
+            <br>
+            <button onclick="executarBoot()" style="background:var(--hina-main); border:none; color:#fff; padding:15px 40px; cursor:pointer; font-family: Orbitron; letter-spacing: 2px;">VINCULAR NEURAL</button>
+        </div>
+    </div>
+
+    <!-- Interface Principal -->
+    <div id="main-ui">
+        <div class="hud-status">
+            <span>SYS_AUTH: VERIFIED</span>
+            <span id="bat-display">BAT: --%</span>
+            <span>HINA_PROTOCOL_v5.5</span>
+        </div>
+
+        <div id="core-wrap">
+            <div class="ring r1"></div>
+            <div class="ring r2"></div>
+            <div class="ring r3"></div>
+            <div id="hina-heart">
+                <svg viewBox="0 0 32 32"><path d="M16 28.5L13.7 26.4C5.6 19 0 14 0 7.9 0 3.5 3.5 0 7.9 0c2.5 0 4.9 1.2 6.5 3.1C16 1.2 18.4 0 20.9 0 25.3 0 28.8 3.5 28.8 7.9c0 6.1-5.6 11.1-13.7 18.5L16 28.5z"/></svg>
+            </div>
+        </div>
+
+        <div id="dialog-box">Sistemas de Ultra-Defesa estabilizados. Aguardando comando, meu Senhor.</div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            SENHA: "09090911",
+            API: "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",
+            MODELO: "llama3-8b-8192"
+        };
+
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const letters = "HINA01";
+        const drops = Array(Math.floor(canvas.width / 12)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.08)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ff007f"; ctx.font = "12px Orbitron";
+            drops.forEach((y, i) => {
+                const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                ctx.fillText(text, i * 12, y * 12);
+                if (y * 12 > canvas.height && Math.random() > 0.98) drops[i] = 0;
+                drops[i]++;
+            });
+        }
+        setInterval(drawMatrix, 35);
+
+        function falar(t) {
+            window.speechSynthesis.cancel();
+            const v = new SpeechSynthesisUtterance(t);
+            v.lang = 'pt-BR'; v.pitch = 1.15; v.rate = 1.0;
+            window.speechSynthesis.speak(v);
+        }
+
+        function executarBoot() {
+            if(document.getElementById('key-input').value === CONFIG.SENHA) {
+                document.getElementById('boot-text').innerText = "PROTOCOLO HINA INICIALIZADO";
+                document.getElementById('boot-text').style.color = "#00ff00";
+                setTimeout(() => {
+                    document.getElementById('boot-loader').style.opacity = "0";
+                    setTimeout(() => {
+                        document.getElementById('boot-loader').style.display = "none";
+                        document.getElementById('main-ui').style.display = "flex";
+                        setTimeout(() => document.getElementById('main-ui').style.opacity = "1", 100);
+                        falar("Protocolo HINA inicializado. Todos os sistemas de defesa em prontidão. Estou aqui, meu Senhor.");
+                    }, 1000);
+                }, 800);
+            } else { alert("ACESSO NEGADO."); }
+        }
+
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'pt-BR';
+        document.getElementById('hina-heart').onclick = () => { 
+            recognition.start(); 
+            document.getElementById('dialog-box').innerText = "[ESCANEANDO FREQUÊNCIA DE VOZ...]";
+        };
+
+        recognition.onresult = async (e) => {
+            const cmd = e.results.transcript;
+            try {
+                const res = await fetch("https://groq.com", {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${CONFIG.API}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        model: CONFIG.MODELO,
+                        messages: [
+                            { role: "system", content: "Seu nome é HINA. Você é uma IA de elite Nível 5. Você é doce, amorosa e tecnicamente impecável. Sua lealdade ao Senhor é absoluta." },
+                            { role: "user", content: cmd }
+                        ]
+                    })
+                });
+                const data = await res.json();
+                const r = data.choices.message.content;
+                document.getElementById('dialog-box').innerText = r;
+                falar(r);
+            } catch(err) { falar("Instabilidade no link neural, Senhor."); }
+        };
+
+        if(navigator.getBattery) navigator.getBattery().then(bat => {
+            const up = () => { document.getElementById('bat-display').innerText = `BAT: ${Math.floor(bat.level*100)}%`; };
+            bat.onlevelchange = up; up();
+        });
+    </script>
+</body>
+</html>
