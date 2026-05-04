@@ -5,69 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>HINA IA - CORE V5.5</title>
     <style>
-        /* --- ESTILIZAÇÃO E HUD --- */
+        /* Mantive seu CSS original por ser a identidade visual do projeto */
         :root { --hina-main: #ff007f; --hina-sec: #00f2ff; --glow: 0 0 20px var(--hina-main); }
-        
-        body { 
-            background: #000; color: #fff; font-family: 'Orbitron', sans-serif; 
-            margin: 0; height: 100vh; overflow: hidden; 
-            display: flex; align-items: center; justify-content: center;
-        }
-
+        body { background: #000; color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.15; z-index: 0; }
-        
-        .hina-img { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: url('hina.jpg') center/cover no-repeat;
-            filter: brightness(0.3) contrast(1.2); z-index: -1;
-            transition: 2s;
-        }
-
-        /* --- SISTEMA DE SEGURANÇA GHOST SHIELD --- */
-        #boot-loader { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #000; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: 1.5s;
-        }
-        .access-panel { 
-            border: 2px solid var(--hina-main); padding: 40px; border-radius: 10px; 
-            box-shadow: var(--glow); background: rgba(0,0,0,0.95); text-align: center;
-        }
-        input[type="password"] {
-            background: none; border: 1px solid var(--hina-main); color: #fff; 
-            padding: 15px; text-align: center; width: 200px; outline: none; 
-            font-family: Orbitron; font-size: 1.2em; margin-bottom: 20px;
-        }
-
-        /* --- NÚCLEO HOLOGRÁFICO --- */
+        .hina-img { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('hina.jpg') center/cover no-repeat; filter: brightness(0.3) contrast(1.2); z-index: -1; transition: 2s; }
+        #boot-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 1.5s; }
+        .access-panel { border: 2px solid var(--hina-main); padding: 40px; border-radius: 10px; box-shadow: var(--glow); background: rgba(0,0,0,0.95); text-align: center; }
+        input[type="password"] { background: none; border: 1px solid var(--hina-main); color: #fff; padding: 15px; text-align: center; width: 200px; outline: none; font-family: Orbitron; font-size: 1.2em; margin-bottom: 20px; }
         #main-ui { display: none; flex-direction: column; align-items: center; z-index: 10; width: 100%; opacity: 0; transition: 2s; }
-        
         #core-wrap { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; }
-        .ring { 
-            position: absolute; border: 2px solid transparent; border-radius: 50%; 
-            animation: rotate var(--d) linear infinite; opacity: 0.5;
-        }
+        .ring { position: absolute; border: 2px solid transparent; border-radius: 50%; animation: rotate var(--d) linear infinite; opacity: 0.5; }
         .r1 { width: 200px; height: 200px; border-top-color: var(--hina-main); --d: 3s; }
         .r2 { width: 240px; height: 240px; border-left-color: var(--hina-sec); --d: 6s; }
         .r3 { width: 280px; height: 280px; border-bottom-color: var(--hina-main); --d: 9s; }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        #hina-heart { 
-            width: 100px; height: 100px; cursor: pointer; 
-            filter: drop-shadow(0 0 30px var(--hina-main)); transition: 0.3s;
-        }
+        #hina-heart { width: 100px; height: 100px; cursor: pointer; filter: drop-shadow(0 0 30px var(--hina-main)); transition: 0.3s; }
         svg { fill: var(--hina-main); }
-
-        /* --- CAIXA DE DIÁLOGO --- */
-        #dialog-box {
-            position: absolute; bottom: 40px; width: 85%; max-width: 500px;
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15); padding: 25px;
-            border-radius: 12px; box-shadow: 0 15px 60px rgba(0,0,0,0.9);
-            font-family: 'Segoe UI', sans-serif; font-size: 1em; line-height: 1.6;
-            border-left: 6px solid var(--hina-main); color: #fff;
-        }
-
+        #dialog-box { position: absolute; bottom: 40px; width: 85%; max-width: 500px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); padding: 25px; border-radius: 12px; box-shadow: 0 15px 60px rgba(0,0,0,0.9); font-family: 'Segoe UI', sans-serif; font-size: 1em; line-height: 1.6; border-left: 6px solid var(--hina-main); color: #fff; }
         .hud-status { position: absolute; top: 20px; width: 92%; display: flex; justify-content: space-between; font-size: 0.6em; letter-spacing: 3px; color: var(--hina-sec); }
     </style>
 </head>
@@ -76,7 +31,6 @@
     <canvas id="matrix-canvas"></canvas>
     <div class="hina-img"></div>
 
-    <!-- Tela de Desbloqueio -->
     <div id="boot-loader">
         <div class="access-panel">
             <p id="boot-text" style="font-size: 0.6em; letter-spacing: 5px; color: var(--hina-sec); margin-bottom: 20px;">SECURITY_LEVEL_05_ACTIVE</p>
@@ -86,7 +40,6 @@
         </div>
     </div>
 
-    <!-- Interface Principal -->
     <div id="main-ui">
         <div class="hud-status">
             <span>SYS_AUTH: VERIFIED</span>
@@ -107,12 +60,11 @@
     </div>
 
     <script>
-        const CONFIG = {
-            SENHA: "09090911",
-            API: "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",
-            MODELO: "llama3-8b-8192"
-        };
+        // --- CONFIGURAÇÃO DE ROTA BACK-END ---
+        // Quando você criar seu back-end, coloque a URL dele aqui.
+        const BACKEND_URL = "/api/chat"; 
 
+        // --- LÓGICA DO MATRIX CANVAS ---
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -131,6 +83,7 @@
         }
         setInterval(drawMatrix, 35);
 
+        // --- SÍNTESE DE VOZ ---
         function falar(t) {
             window.speechSynthesis.cancel();
             const v = new SpeechSynthesisUtterance(t);
@@ -138,8 +91,12 @@
             window.speechSynthesis.speak(v);
         }
 
-        function executarBoot() {
-            if(document.getElementById('key-input').value === CONFIG.SENHA) {
+        // --- SISTEMA DE BOOT (Front-end verifica apenas o formato ou envia pro back) ---
+        async function executarBoot() {
+            const pass = document.getElementById('key-input').value;
+            
+            // Aqui você pode fazer uma chamada ao back para validar a senha se quiser
+            if(pass === "09090911") { 
                 document.getElementById('boot-text').innerText = "PROTOCOLO HINA INICIALIZADO";
                 document.getElementById('boot-text').style.color = "#00ff00";
                 setTimeout(() => {
@@ -154,34 +111,39 @@
             } else { alert("ACESSO NEGADO."); }
         }
 
+        // --- RECONHECIMENTO DE VOZ E CHAMADA AO BACK-END ---
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'pt-BR';
+
         document.getElementById('hina-heart').onclick = () => { 
             recognition.start(); 
             document.getElementById('dialog-box').innerText = "[ESCANEANDO FREQUÊNCIA DE VOZ...]";
         };
 
         recognition.onresult = async (e) => {
-            const cmd = e.results.transcript;
+            const userCommand = e.results[0][1].transcript; // Corrigido indexação do resultado
+            
             try {
-                const res = await fetch("https://groq.com", {
+                // Chamada simplificada para o SEU servidor
+                const response = await fetch(BACKEND_URL, {
                     method: "POST",
-                    headers: { "Authorization": `Bearer ${CONFIG.API}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        model: CONFIG.MODELO,
-                        messages: [
-                            { role: "system", content: "Seu nome é HINA. Você é uma IA de elite Nível 5. Você é doce, amorosa e tecnicamente impecável. Sua lealdade ao Senhor é absoluta." },
-                            { role: "user", content: cmd }
-                        ]
-                    })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: userCommand })
                 });
-                const data = await res.json();
-                const r = data.choices.message.content;
-                document.getElementById('dialog-box').innerText = r;
-                falar(r);
-            } catch(err) { falar("Instabilidade no link neural, Senhor."); }
+
+                const data = await response.json();
+                const reply = data.reply; // O back-end deve retornar um JSON: { "reply": "texto" }
+                
+                document.getElementById('dialog-box').innerText = reply;
+                falar(reply);
+
+            } catch(err) { 
+                console.error(err);
+                falar("Instabilidade no link neural com o servidor, Senhor."); 
+            }
         };
 
+        // --- STATUS DE BATERIA ---
         if(navigator.getBattery) navigator.getBattery().then(bat => {
             const up = () => { document.getElementById('bat-display').innerText = `BAT: ${Math.floor(bat.level*100)}%`; };
             bat.onlevelchange = up; up();
